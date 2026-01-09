@@ -13,7 +13,8 @@ from difflib import get_close_matches
 from datetime import datetime, timedelta, timezone
 from discord.ui import View, Select, select  # For dropdowns
 from discord import Interaction, Embed  # For type hints and responses
-
+from flask import Flask
+from threading import Thread
 
 intents = discord.Intents.default()
 intents.messages = True
@@ -25,8 +26,21 @@ intents.guilds = True
 intents.reactions = True
 client = commands.Bot(command_prefix=",", intents=intents)
 
-BOT_OWNER_ID = 1082009804874199150 
 
+
+
+app = Flask(__name__)
+
+@app.route("/")
+def home():
+    return "Anvi is alive!"
+
+def run_web():
+    app.run(host="0.0.0.0", port=8080)
+
+Thread(target=run_web).start()
+
+BOT_OWNER_ID = 1082009804874199150 
 #===================================== BOT READY INFO =====================================
 
 # Event handler for when the bot is ready
