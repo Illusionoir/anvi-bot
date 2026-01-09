@@ -275,9 +275,9 @@ async def on_app_command_completion(interaction, command):
 
 # ==== CONFIG ====
 FONT_PATH = "dejavu-sans.book.ttf"
-BACKGROUND_FOLDER = "/home/container/background"
+BACKGROUND_FOLDER = "background"
 BADGES_FILE = "badges.json"
-BADGES_FOLDER = "/home/container/badges"
+BADGES_FOLDER = "badges"
 
 
 # ==== BADGE LOGIC ====
@@ -310,9 +310,12 @@ def get_user_badges(user_id, level, balance, leaderboard, all_data):
 
     return list(badges)
 
-
 # ==== /level COMMAND ====
-@client.hybrid_command(name="level", description="Show your rank card.", aliases=['lvl'])
+@client.hybrid_command(
+    name="level",
+    description="Show your rank card.",
+    aliases=["lvl"]
+)
 async def level(ctx, member: discord.Member = None):
     member = member or ctx.author
     levels = load_data(LEVELS_FILE)
@@ -327,15 +330,33 @@ async def level(ctx, member: discord.Member = None):
     xp = user_data["xp"]
     xp_needed = get_level_xp_required(level_num)
 
-    balance = load_data("balance.json").get(str_uid, 0)
-    sorted_levels = sorted(levels.items(), key=lambda x: (x[1]["level"], x[1]["xp"]), reverse=True)
+    balance = load_data("balances.json").get(str_uid, 0)
+
+    sorted_levels = sorted(
+        levels.items(),
+        key=lambda x: (x[1]["level"], x[1]["xp"]),
+        reverse=True
+    )
     leaderboard = [uid for uid, _ in sorted_levels]
 
-    try:
-        file = await generate_rank_card(member, level_num, xp, xp_needed, balance, leaderboard, levels)
-        await ctx.send(file=file)
-    except Exception as e:
-        await ctx.send(f"Error generating card: `{e}`")
+    # ---- SAFE CARD GENERATION ----
+    file = await generate_rank_card(
+        member,
+        level_num,
+        xp,
+        xp_needed,
+        balance,
+        leaderboard,
+        levels
+    )
+
+    if file is None:
+        await ctx.send("❌ Failed to generate level card.")
+        return
+
+    await ctx.send(file=file)
+
+
 level.category = "Utility"
 
 
@@ -448,7 +469,7 @@ async def generate_rank_card(member, level, xp, xp_required, balance, leaderboar
 async def givebadge(ctx, member: discord.Member, badge: str):
     
     
-    if ctx.author.id != OWNER_ID:
+    if ctx.author.id != BOT_OWNER_ID:
         await ctx.send("❌ You are not authorized to use this command.", ephemeral=True)
         return
 
