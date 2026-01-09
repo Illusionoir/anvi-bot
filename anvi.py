@@ -13,7 +13,7 @@ from difflib import get_close_matches
 from datetime import datetime, timedelta, timezone
 from discord.ui import View, Select, select  # For dropdowns
 from discord import Interaction, Embed  # For type hints and responses
-from flask import Flask
+from flask import Flask, redirect
 from threading import Thread
 
 intents = discord.Intents.default()
