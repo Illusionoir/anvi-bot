@@ -1898,6 +1898,5 @@ richest.category = "Economy"
 
 #Run the bot 
 
-TOKEN = os.getenv("DISCORD_TOKEN")
-client.run(TOKEN)
+client.run(os.getenv("DISCORD_TOKEN"))
 
