@@ -266,7 +266,7 @@ async def on_command_completion(ctx):
 
 # Triggered after any slash command
 @client.listen()
-async def on_app_command_completion(interaction):
+async def on_app_command_completion(interaction, command):
     await add_xp(interaction.user.id, xp_to_add=10, channel=interaction.channel)
 
 
