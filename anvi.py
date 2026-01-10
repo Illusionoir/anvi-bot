@@ -1389,7 +1389,7 @@ async def roulette(ctx, amount: int, color: str):
 
     embed.add_field(
         name="🎲 Odds",
-        value="🔴 Red — 20% ×2\n⚫ Black — 75% Lose\n🟢 Green — 5% ×10",
+        value="🔴 Red — ~48.6% ×2 the amount\n⚫ Black — ~48.6% ×2 the amount\n🟢 Green — ~2.7%% ×10 the amount",
         inline=False
     )
     
