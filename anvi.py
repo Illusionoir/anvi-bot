@@ -1210,6 +1210,54 @@ coin.category = "Fun"
 
 
 
+# ============================== FOX ==============================
+
+@client.hybrid_command(
+    name="fox",
+    description="Get a cute fox image or gif 🦊"
+)
+@app_commands.describe(
+    type="Choose image or gif"
+)
+@app_commands.choices(
+    type=[
+        app_commands.Choice(name="image", value="image"),
+        app_commands.Choice(name="gif", value="gif"),
+    ]
+)
+async def fox(ctx, type: app_commands.Choice[str]):
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get("https://randomfox.ca/floof/") as resp:
+                data = await resp.json()
+
+        url = data["image"]
+
+        if type.value == "gif" and not url.endswith(".gif"):
+            # retry once if API gives image instead of gif
+            async with aiohttp.ClientSession() as session:
+                async with session.get("https://randomfox.ca/floof/") as resp:
+                    data = await resp.json()
+                    url = data["image"]
+
+        embed = discord.Embed(
+            title="🦊 Fox Time!",
+            color=discord.Color.orange()
+        )
+        embed.set_image(url=url)
+        embed.set_footer(text=f"Requested by {ctx.author.display_name}")
+
+        await ctx.send(embed=embed)
+
+    except Exception:
+        await ctx.send(
+            "❌ Failed to fetch a fox. Try again later.",
+            ephemeral=True
+        )
+
+fox.category = "Fun"
+
+
 #==================================================== ECONOMY ========================================================
 
 
